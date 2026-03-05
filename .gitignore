@@ -1,0 +1,16 @@
+# Temporary files
+*.tmp
+*.log
+
+# Credentials and secrets
+.env
+*.key
+*.pem
+secrets/
+
+# Environment-specific configurations
+config/local.yaml
+
+# Databricks-specific
+.databricks/
+*.checkpoint/
