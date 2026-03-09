@@ -1,0 +1,52 @@
+# Databricks Asset Bundle configuration, more info here: https://docs.databricks.com/en/dev-tools/bundles/settings.html
+bundle:
+  name: "my-data-pipeline"
+
+include:
+  - resources/*.yml
+  - resources/*/*.yml
+
+variables:
+  cluster_id:
+    description: The cluster to use for job execution
+    default: 1234-567890-abcde123
+  environment:
+    description: The deployment environment name
+    default: development
+  notification_email:
+    description: Email address for job notifications
+    default: data-team@company.com
+
+resources:
+  jobs:
+    compute-example:
+      job_clusters:
+        - job_cluster_key: shared-cluster
+          new_cluster:
+            spark_version: 14.3.x-scala2.12
+            node_type_id: Standard_DS3_v2
+            num_workers: 2
+            spark_conf:
+              spark.databricks.cluster.profile: serverless
+      tasks:
+        - task_key: task-one
+          job_cluster_key: shared-cluster
+          notebook_task:
+            notebook_path: ./notebooks/task_one.py
+        - task_key: task-two
+          job_cluster_key: shared-cluster
+          notebook_task:
+            notebook_path: ./notebooks/task_two.py
+
+targets:
+  custom:
+    presets:
+      name_prefix: my_prefix_
+      trigger_pause_status: UNPAUSED
+      jobs_max_concurrent_runs: 5
+      tags:
+        environment: custom
+        team: data-engineering
+
+
+

@@ -1,0 +1,42 @@
+# This is a Databricks asset bundle definition for simple_asset_bundle.
+# See https://docs.databricks.com/dev-tools/bundles/index.html for documentation.
+bundle:
+  name: simple_asset_bundle
+  uuid: cb49fecf-1263-4f86-853e-47020cb1c52f
+
+include:
+  - resources/*.yml
+  - resources/*/*.yml
+
+# Variable declarations. These variables are assigned in the dev/prod targets below.
+variables:
+  catalog:
+    description: The catalog to use
+  schema:
+    description: The schema to use
+
+targets:
+  dev:
+    # The default target uses 'mode: development' to create a development copy.
+    # - Deployed resources get prefixed with '[dev my_user_name]'
+    # - Any job schedules and triggers are paused by default.
+    # See also https://docs.databricks.com/dev-tools/bundles/deployment-modes.html.
+    mode: development
+    default: true
+    workspace:
+      host: https://adb-1191024883105857.17.azuredatabricks.net
+    variables:
+      catalog: ms_learn
+      schema: ${workspace.current_user.short_name}
+  prod:
+    mode: production
+    workspace:
+      host: https://adb-1191024883105857.17.azuredatabricks.net
+      # We explicitly deploy to /Workspace/Users/admin@mngenvmcap801981.onmicrosoft.com to make sure we only have a single copy.
+      root_path: /Workspace/Users/admin@mngenvmcap801981.onmicrosoft.com/.bundle/${bundle.name}/${bundle.target}
+    variables:
+      catalog: ms_learn
+      schema: prod
+    permissions:
+      - user_name: admin@mngenvmcap801981.onmicrosoft.com
+        level: CAN_MANAGE
